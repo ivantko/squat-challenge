@@ -23,7 +23,8 @@
       "@/css/*": ["css/*"],
       "@/lib/*": ["lib/*"],
       "@/theme/*": ["theme/*"],
-      "@/app/*": ["app/*"]
+      "@/app/*": ["app/*"],
+      "@/models/*": ["models/*"]
     },
     "plugins": [
       {
