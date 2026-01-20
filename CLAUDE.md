@@ -85,6 +85,44 @@ Core workflow:
 
 Check for console errors to verify features work as expected.
 
+## Local Supabase Testing
+
+For testing auth flows (magic links) without relying on hosted Supabase email delivery, use local Supabase with Mailpit.
+
+**Prerequisites:**
+- Docker running (OrbStack recommended on macOS)
+- Supabase CLI installed
+
+**Start local Supabase:**
+```bash
+npm run supabase:start
+```
+
+**Update `.env.local` for local testing:**
+```bash
+# Replace hosted values with local:
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+```
+
+**Test magic link flow:**
+1. Restart dev server after env changes
+2. Go to login page, enter any email (e.g., `test@local.dev`)
+3. Open Mailpit at `http://localhost:54324`
+4. Click the magic link from the email
+5. You'll be authenticated and redirected to dashboard
+
+**Supabase Studio:** `http://localhost:54323` (manage users, view data)
+
+**Stop local Supabase:**
+```bash
+npm run supabase:stop
+```
+
+**Restore hosted Supabase:** Revert `.env.local` to use hosted URL and anon key, then restart dev server.
+
+See `docs/local-supabase.md` for complete setup guide.
+
 ## **EXTREMELY IMPORTANT:** Code Quality Checks
 
 **ALWAYS follow these instructions before completing a task.**
