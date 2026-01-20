@@ -43,3 +43,10 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# local tooling / caches
+tsconfig.tsbuildinfo
+test-results/
+.playwright-mcp/
+.claude/settings.local.json
+.claude/skills/
