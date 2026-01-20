@@ -14,7 +14,9 @@ test.describe('auth + dashboard smoke', () => {
 
     // Create a disposable user and generate a magic link.
     const admin = getSupabaseAdminClient();
-    const email = `e2e+${Date.now()}@example.com`;
+    // Use a real domain because some hosted SMTP/validation setups reject reserved/test domains.
+    // This does not require a real inbox: we use admin.generateLink() and navigate to the action_link.
+    const email = `e2e+${Date.now()}@gmail.com`;
 
     const { data, error } = await admin.auth.admin.generateLink({
       type: 'magiclink',

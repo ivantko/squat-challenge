@@ -1,0 +1,26 @@
+project_id = "vibe-coding-starter"
+
+[api]
+enabled = true
+
+[db]
+major_version = 15
+
+# Supabase CLI local email testing.
+# When running `supabase start`, auth emails (magic links, confirmations, etc.)
+# are captured by Mailpit and can be viewed in the Mailpit UI (default port 54324).
+[inbucket]
+enabled = true
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[auth]
+enabled = true
+site_url = "http://localhost:6006"
+additional_redirect_urls = ["http://localhost:6006/**"]
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+
