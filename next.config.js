@@ -1,6 +1,7 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
+const path = require('path');
 
 // You might need to insert additional domains in script-src if you are using external services
 const ContentSecurityPolicy = `
@@ -58,6 +59,9 @@ module.exports = () => {
   const plugins = [withBundleAnalyzer];
   return plugins.reduce((acc, next) => next(acc), {
     reactStrictMode: true,
+    // Prevent Next from inferring a higher workspace root when multiple lockfiles exist.
+    // This stabilizes output tracing and avoids confusing root warnings.
+    outputFileTracingRoot: path.join(__dirname),
     pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
     eslint: {
       dirs: ['app', 'components', 'layouts', 'scripts'],
