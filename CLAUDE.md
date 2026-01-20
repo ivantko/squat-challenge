@@ -57,10 +57,25 @@ Guidelines for continuously improving rules based on emerging code patterns, inc
 
 When the user requests code examples, setup or configuration steps, or library/API documentation, use the context7 mcp server to get the information.
 
-## Verifying features in the browser
+## Browser Testing & Automation
 
-Use the Playwright MCP server to verify features in the browser.
-Check for console errors and ensure the implemented functionality is working as expected.
+**Playwright** - Use for repeatable, committed tests:
+- E2E tests, CI runs, regression coverage
+- Deterministic flows, fixtures, network mocking
+- Traces/videos, parallel runs, cross-browser
+
+**agent-browser** - Use for quick exploration:
+- Fast manual verification, debugging UI state
+- Checking deployed URLs, screenshots
+- Lightweight one-off tasks
+
+Run `agent-browser --help` for commands. Core workflow:
+1. `agent-browser open <url>` - Navigate to page
+2. `agent-browser snapshot -i` - Get interactive elements with refs (@e1, @e2)
+3. `agent-browser click @e1` / `fill @e2 "text"` - Interact using refs
+4. Re-snapshot after page changes
+
+Check for console errors to verify features work as expected.
 
 ## **EXTREMELY IMPORTANT:** Code Quality Checks
 
