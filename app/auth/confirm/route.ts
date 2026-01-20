@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
+  const code = url.searchParams.get('code');
   const token_hash = url.searchParams.get('token_hash');
   const type = url.searchParams.get('type') as EmailOtpType | null;
   const next = url.searchParams.get('next') || '/dashboard';
@@ -12,9 +13,24 @@ export async function GET(request: NextRequest) {
   redirectTo.pathname = next;
   redirectTo.search = '';
 
+  const supabase = await createServerSupabaseClient();
+
+  // Handle PKCE flow (code parameter from Supabase redirect)
+  if (code) {
+    try {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+      if (!error) {
+        return NextResponse.redirect(redirectTo);
+      }
+    } catch (error) {
+      void error;
+    }
+  }
+
+  // Handle legacy OTP flow (token_hash parameter)
   if (token_hash && type) {
     try {
-      const supabase = await createServerSupabaseClient();
       const { error } = await supabase.auth.verifyOtp({ type, token_hash });
 
       if (!error) {
