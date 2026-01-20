@@ -69,7 +69,15 @@ When the user requests code examples, setup or configuration steps, or library/A
 - Checking deployed URLs, screenshots
 - Lightweight one-off tasks
 
-Run `agent-browser --help` for commands. Core workflow:
+Run `agent-browser --help` for commands.
+
+**Setup** (one-time):
+```bash
+npm install -g agent-browser
+agent-browser install  # downloads Chromium
+```
+
+Core workflow:
 1. `agent-browser open <url>` - Navigate to page
 2. `agent-browser snapshot -i` - Get interactive elements with refs (@e1, @e2)
 3. `agent-browser click @e1` / `fill @e2 "text"` - Interact using refs
