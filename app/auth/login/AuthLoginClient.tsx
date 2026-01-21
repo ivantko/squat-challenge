@@ -25,8 +25,9 @@ export function AuthLoginClient() {
 
     try {
       const supabase = createBrowserSupabaseClient();
-      const origin = window.location.origin;
-      const emailRedirectTo = `${origin}/auth/confirm?next=${encodeURIComponent(nextPath)}`;
+      const siteUrl =
+        process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const emailRedirectTo = `${siteUrl}/auth/confirm?next=${encodeURIComponent(nextPath)}`;
 
       const { error } = await supabase.auth.signInWithOtp({
         email,
