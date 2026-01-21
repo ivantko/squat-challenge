@@ -20,11 +20,13 @@ export async function GET(request: NextRequest) {
     try {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-      if (!error) {
+      if (error) {
+        console.error('[Auth Confirm] PKCE error:', error.message);
+      } else {
         return NextResponse.redirect(redirectTo);
       }
-    } catch (error) {
-      void error;
+    } catch (err) {
+      console.error('[Auth Confirm] PKCE exception:', err);
     }
   }
 
@@ -33,11 +35,13 @@ export async function GET(request: NextRequest) {
     try {
       const { error } = await supabase.auth.verifyOtp({ type, token_hash });
 
-      if (!error) {
+      if (error) {
+        console.error('[Auth Confirm] OTP error:', error.message);
+      } else {
         return NextResponse.redirect(redirectTo);
       }
-    } catch (error) {
-      void error;
+    } catch (err) {
+      console.error('[Auth Confirm] OTP exception:', err);
     }
   }
 
