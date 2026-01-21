@@ -426,72 +426,72 @@ input:-webkit-autofill:focus {
 }
 
 /**
- * HFTM Dashboard Theme Variables
- * Scoped semantic tokens for the HamsForTheMaams fitness challenge dashboard
+ * FiveGuysLudus Dashboard Theme Variables
+ * Scoped semantic tokens for the challenge ranking dashboard
  */
 
-/* HFTM Dashboard Theme - Light Mode */
-.hftm-theme {
-  --hftm-bg: 210 40% 98%;
-  --hftm-surface1: 0 0% 100%;
-  --hftm-surface2: 210 40% 96%;
-  --hftm-surface3: 210 40% 98%;
-  --hftm-text-primary: 222 47% 11% / 0.92;
-  --hftm-text-secondary: 222 47% 11% / 0.62;
-  --hftm-text-tertiary: 222 47% 11% / 0.45;
-  --hftm-border: 222 47% 11% / 0.08;
+/* FiveGuysLudus Dashboard Theme - Light Mode */
+.ludus-theme {
+  --ludus-bg: 210 40% 98%;
+  --ludus-surface1: 0 0% 100%;
+  --ludus-surface2: 210 40% 96%;
+  --ludus-surface3: 210 40% 98%;
+  --ludus-text-primary: 222 47% 11% / 0.92;
+  --ludus-text-secondary: 222 47% 11% / 0.62;
+  --ludus-text-tertiary: 222 47% 11% / 0.45;
+  --ludus-border: 222 47% 11% / 0.08;
 
   /* Shadcn semantic tokens (scoped to dashboard) */
-  --background: var(--hftm-bg);
-  --foreground: var(--hftm-text-primary);
-  --card: var(--hftm-surface1);
-  --card-foreground: var(--hftm-text-primary);
-  --popover: var(--hftm-surface1);
-  --popover-foreground: var(--hftm-text-primary);
-  --muted: var(--hftm-surface2);
-  --muted-foreground: var(--hftm-text-secondary);
-  --accent: var(--hftm-surface3);
-  --accent-foreground: var(--hftm-text-primary);
-  --border: var(--hftm-border);
-  --input: var(--hftm-border);
+  --background: var(--ludus-bg);
+  --foreground: var(--ludus-text-primary);
+  --card: var(--ludus-surface1);
+  --card-foreground: var(--ludus-text-primary);
+  --popover: var(--ludus-surface1);
+  --popover-foreground: var(--ludus-text-primary);
+  --muted: var(--ludus-surface2);
+  --muted-foreground: var(--ludus-text-secondary);
+  --accent: var(--ludus-surface3);
+  --accent-foreground: var(--ludus-text-primary);
+  --border: var(--ludus-border);
+  --input: var(--ludus-border);
 }
 
-/* HFTM Dashboard Theme - Dark Mode */
-.dark .hftm-theme {
-  --hftm-bg: 222 47% 11%;
-  --hftm-surface1: 217 33% 17%;
-  --hftm-surface2: 215 28% 17%;
-  --hftm-surface3: 220 39% 11%;
-  --hftm-text-primary: 0 0% 100% / 0.92;
-  --hftm-text-secondary: 0 0% 100% / 0.62;
-  --hftm-text-tertiary: 0 0% 100% / 0.42;
-  --hftm-border: 0 0% 100% / 0.06;
+/* FiveGuysLudus Dashboard Theme - Dark Mode */
+.dark .ludus-theme {
+  --ludus-bg: 222 47% 11%;
+  --ludus-surface1: 217 33% 17%;
+  --ludus-surface2: 215 28% 17%;
+  --ludus-surface3: 220 39% 11%;
+  --ludus-text-primary: 0 0% 100% / 0.92;
+  --ludus-text-secondary: 0 0% 100% / 0.62;
+  --ludus-text-tertiary: 0 0% 100% / 0.42;
+  --ludus-border: 0 0% 100% / 0.06;
 
   /* Shadcn semantic tokens (scoped to dashboard) */
-  --background: var(--hftm-bg);
-  --foreground: var(--hftm-text-primary);
-  --card: var(--hftm-surface1);
-  --card-foreground: var(--hftm-text-primary);
-  --popover: var(--hftm-surface1);
-  --popover-foreground: var(--hftm-text-primary);
-  --muted: var(--hftm-surface2);
-  --muted-foreground: var(--hftm-text-secondary);
-  --accent: var(--hftm-surface3);
-  --accent-foreground: var(--hftm-text-primary);
-  --border: var(--hftm-border);
-  --input: var(--hftm-border);
+  --background: var(--ludus-bg);
+  --foreground: var(--ludus-text-primary);
+  --card: var(--ludus-surface1);
+  --card-foreground: var(--ludus-text-primary);
+  --popover: var(--ludus-surface1);
+  --popover-foreground: var(--ludus-text-primary);
+  --muted: var(--ludus-surface2);
+  --muted-foreground: var(--ludus-text-secondary);
+  --accent: var(--ludus-surface3);
+  --accent-foreground: var(--ludus-text-primary);
+  --border: var(--ludus-border);
+  --input: var(--ludus-border);
 }
 
-/* HFTM Dashboard Background (no raw px; token-based glow) */
-.hftm-dashboard-bg {
+/* FiveGuysLudus Dashboard Background (token-based glow) */
+.ludus-dashboard-bg {
   @apply relative overflow-hidden bg-background;
 }
 
-.hftm-dashboard-bg::before {
+.ludus-dashboard-bg::before {
   content: '';
   @apply pointer-events-none absolute left-1/2 top-0 h-96 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-500/15 blur-3xl;
 }
 
-.dark .hftm-dashboard-bg::before {
+.dark .ludus-dashboard-bg::before {
   @apply bg-primary-500/10;
 }

@@ -2,7 +2,7 @@
 
 import { CrownIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Participant } from '@/models/hams-for-the-maams';
+import type { Participant } from '@/models/challenge-ranking';
 
 interface Top3PodiumProps {
   participants: Participant[];

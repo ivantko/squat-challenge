@@ -1,34 +1,35 @@
-import Link from '@/components/shared/Link';
-import Footer from '@/components/shared/Footer';
-import Header from '@/components/shared/Header';
+import Link from 'next/link';
+import { SwordsIcon, HomeIcon } from 'lucide-react';
+import { Button } from '@/components/shared/ui/button';
 
 export default function NotFound() {
   return (
-    <>
-      <Header />
-      <div className="min-h-[500px] flex flex-col items-start justify-start md:mt-24 md:flex-row md:items-center md:justify-center md:space-x-6">
-        <div className="space-x-2 pb-8 pt-6 md:space-y-5">
-          <h1 className="text-6xl font-semibold leading-9 tracking-tight text-gray-900 dark:text-gray-100 md:border-r-2 md:px-6 md:text-8xl md:leading-14">
-            404
-          </h1>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
+      <div className="mx-auto max-w-md text-center">
+        {/* Logo */}
+        <div className="mb-8 flex items-center justify-center gap-2">
+          <SwordsIcon className="h-8 w-8 text-primary-500" />
+          <span className="text-2xl font-bold text-foreground">FiveGuysLudus</span>
         </div>
-        <div className="max-w-md">
-          <p className="mb-4 text-xl font-bold leading-normal md:text-2xl">
-            Sorry, we couldn't find this page.
-          </p>
-          <p className="mb-8">
-            Please head back to the homepage or contact us if you think this is
-            an error.
-          </p>
-          <Link
-            href="/"
-            className="focus:shadow-outline-primary inline rounded-lg border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium leading-5 text-white shadow transition-colors duration-150 hover:bg-primary-700 focus:outline-none dark:hover:bg-primary-500"
-          >
-            Back to homepage
+
+        {/* 404 */}
+        <h1 className="mb-4 text-8xl font-bold text-primary-500">404</h1>
+
+        {/* Message */}
+        <h2 className="mb-2 text-2xl font-semibold text-foreground">Page Not Found</h2>
+        <p className="mb-8 text-muted-foreground">
+          Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have
+          been moved or deleted.
+        </p>
+
+        {/* Action */}
+        <Button asChild size="lg" className="gap-2">
+          <Link href="/">
+            <HomeIcon className="h-4 w-4" />
+            Back to Home
           </Link>
-        </div>
+        </Button>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 }

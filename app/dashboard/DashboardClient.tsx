@@ -10,11 +10,13 @@ import {
   LeaderboardTable,
   ParticipantDetail,
   LogEntryCard,
+  DuelDialog,
+  DuelList,
 } from '@/components/dashboard';
 import type {
   Participant as ParticipantModel,
   ParticipantDetail as ParticipantDetailModel,
-} from '@/models/hams-for-the-maams';
+} from '@/models/challenge-ranking';
 
 type ChallengeDto = { slug: string; name: string };
 
@@ -61,15 +63,23 @@ export function DashboardClient() {
   const [isLoadingParticipant, setIsLoadingParticipant] = useState(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
 
+  // Duel dialog state
+  const [isDuelDialogOpen, setIsDuelDialogOpen] = useState(false);
+  const [duelRefreshTrigger, setDuelRefreshTrigger] = useState(0);
+
   useEffect(() => {
     let isActive = true;
 
     async function loadMe() {
       try {
         const res = await fetch('/api/me');
-        if (!res.ok) return;
+        if (!res.ok) {
+          return;
+        }
         const data = (await res.json()) as { userId?: string };
-        if (isActive) setCurrentUserId(data.userId ?? null);
+        if (isActive) {
+          setCurrentUserId(data.userId ?? null);
+        }
       } catch (error) {
         void error;
       }
@@ -88,13 +98,19 @@ export function DashboardClient() {
     async function loadChallenges() {
       try {
         const res = await fetch('/api/challenges');
-        if (!res.ok) return;
+        if (!res.ok) {
+          return;
+        }
         const data = (await res.json()) as { challenges: ChallengeDto[] };
-        if (isActive) setChallenges(data.challenges || []);
+        if (isActive) {
+          setChallenges(data.challenges || []);
+        }
       } catch (error) {
         void error;
       } finally {
-        if (isActive) setIsLoadingChallenges(false);
+        if (isActive) {
+          setIsLoadingChallenges(false);
+        }
       }
     }
 
@@ -126,9 +142,13 @@ export function DashboardClient() {
         const res = await fetch(
           `/api/leaderboard?challenge=${encodeURIComponent(selectedChallengeId)}`,
         );
-        if (!res.ok) return;
+        if (!res.ok) {
+          return;
+        }
         const data = (await res.json()) as { rows: LeaderboardRowDto[] };
-        if (!isActive) return;
+        if (!isActive) {
+          return;
+        }
 
         setParticipants(
           (data.rows || []).map((r) => ({
@@ -145,7 +165,9 @@ export function DashboardClient() {
       } catch (error) {
         void error;
       } finally {
-        if (isActive) setIsLoadingLeaderboard(false);
+        if (isActive) {
+          setIsLoadingLeaderboard(false);
+        }
       }
     }
 
@@ -169,9 +191,13 @@ export function DashboardClient() {
         const res = await fetch(
           `/api/participants/${encodeURIComponent(selectedParticipantId)}?challenge=${encodeURIComponent(selectedChallengeId)}`,
         );
-        if (!res.ok) return;
+        if (!res.ok) {
+          return;
+        }
         const data = (await res.json()) as ParticipantDetailDto;
-        if (!isActive) return;
+        if (!isActive) {
+          return;
+        }
 
         setSelectedParticipant({
           id: data.userId,
@@ -188,7 +214,9 @@ export function DashboardClient() {
       } catch (error) {
         void error;
       } finally {
-        if (isActive) setIsLoadingParticipant(false);
+        if (isActive) {
+          setIsLoadingParticipant(false);
+        }
       }
     }
 
@@ -242,6 +270,14 @@ export function DashboardClient() {
     }
   }, [selectedParticipantId, updateUrlParams, router]);
 
+  const handleDuelClick = useCallback(() => {
+    setIsDuelDialogOpen(true);
+  }, []);
+
+  const handleDuelCreated = useCallback(() => {
+    setDuelRefreshTrigger((x) => x + 1);
+  }, []);
+
   // Determine if we should show detail view on mobile
   const showDetailOnMobile = !!selectedParticipantId;
   const showDetailPane = !!selectedParticipantId;
@@ -258,8 +294,11 @@ export function DashboardClient() {
     return challenges.map((c) => ({ id: c.slug, name: c.name }));
   }, [challenges, isLoadingChallenges]);
 
+  const isOwnProfile =
+    currentUserId && selectedParticipant && selectedParticipant.id === currentUserId;
+
   return (
-    <div className="hftm-theme hftm-dashboard-bg min-h-screen text-foreground transition-colors">
+    <div className="ludus-theme ludus-dashboard-bg min-h-screen text-foreground transition-colors">
       <div className="mx-auto max-w-7xl">
         {/* App Bar */}
         <DashboardAppBar
@@ -326,6 +365,14 @@ export function DashboardClient() {
                     className="max-h-96"
                   />
                 </div>
+
+                {/* Duel List */}
+                {currentUserId && (
+                  <DuelList
+                    currentUserId={currentUserId}
+                    refreshTrigger={duelRefreshTrigger}
+                  />
+                )}
               </div>
             </div>
 
@@ -342,6 +389,8 @@ export function DashboardClient() {
                   <ParticipantDetail
                     participant={selectedParticipant}
                     className="rounded-3xl bg-card p-4 shadow-xl md:p-6"
+                    isOwnProfile={!!isOwnProfile}
+                    onDuelClick={handleDuelClick}
                   />
                   {currentUserId && selectedParticipant.id === currentUserId && (
                     <LogEntryCard
@@ -371,7 +420,18 @@ export function DashboardClient() {
           </div>
         </div>
       </div>
+
+      {/* Duel Dialog */}
+      {selectedParticipant && !isOwnProfile && (
+        <DuelDialog
+          open={isDuelDialogOpen}
+          onOpenChange={setIsDuelDialogOpen}
+          opponentId={selectedParticipant.id}
+          opponentName={selectedParticipant.name}
+          challengeId={selectedChallengeId !== 'all' ? selectedChallengeId : undefined}
+          onDuelCreated={handleDuelCreated}
+        />
+      )}
     </div>
   );
 }
-

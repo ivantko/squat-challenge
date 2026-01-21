@@ -1,10 +1,10 @@
 const metadata = {
-  title: 'Mevolut | Simple B2C Fintech for your Money',
+  title: 'FiveGuysLudus | Challenge Ranking for Buddies',
   description:
-    'Manage your money the easy way with Mevolut. Track expenses, send money, and grow your savings – safely and simply. Sign up free today!',
+    'Track challenges between 5 buddies across Fitness, Finance, and Gaming. Compete, duel, and climb the leaderboard!',
   domain: 'pageai.pro',
   logoTitle: '',
-  businessName: 'Mevolut',
+  businessName: 'FiveGuysLudus',
   siteUrl: 'https://pageai.pro',
   siteRepo: '',
   socialBanner: '/api/og',
@@ -19,9 +19,9 @@ const metadata = {
   facebook: '',
   threads: '',
   mastodon: '',
-  author: 'Mevolut',
+  author: 'FiveGuysLudus',
   language: 'en-us',
-  theme: 'light',
+  theme: 'dark',
   locale: 'en-US',
 };
 

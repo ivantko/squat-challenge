@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import type { Participant } from '@/models/hams-for-the-maams';
+import type { Participant } from '@/models/challenge-ranking';
 
 interface LeaderboardTableProps {
   participants: Participant[];

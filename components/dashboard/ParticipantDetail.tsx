@@ -2,11 +2,13 @@
 
 import { SwordsIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ParticipantDetail as ParticipantDetailType } from '@/models/hams-for-the-maams';
+import type { ParticipantDetail as ParticipantDetailType } from '@/models/challenge-ranking';
 
 interface ParticipantDetailProps {
   participant: ParticipantDetailType;
   className?: string;
+  isOwnProfile?: boolean;
+  onDuelClick?: () => void;
 }
 
 function ProgressBar({
@@ -41,7 +43,9 @@ function RankingChart({
 }: {
   data: { month: string; position: number }[];
 }) {
-  if (data.length === 0) return null;
+  if (data.length === 0) {
+    return null;
+  }
 
   // Calculate chart dimensions
   const chartHeight = 120;
@@ -67,7 +71,9 @@ function RankingChart({
 
   // Create smooth path
   const pathD = points.reduce((acc, point, i) => {
-    if (i === 0) return `M ${point.x} ${point.y}`;
+    if (i === 0) {
+      return `M ${point.x} ${point.y}`;
+    }
     return `${acc} L ${point.x} ${point.y}`;
   }, '');
 
@@ -77,65 +83,65 @@ function RankingChart({
         Ranking position
       </h3>
       <div className="rounded-2xl bg-muted/50 p-4">
-      <svg
-        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-        className="h-auto w-full"
-        aria-label="Ranking position chart"
-      >
-        {/* Grid lines */}
-        {[0, 0.5, 1].map((ratio) => (
-          <line
-            key={ratio}
-            x1={paddingX}
-            y1={paddingY + ratio * innerHeight}
-            x2={chartWidth - paddingX}
-            y2={paddingY + ratio * innerHeight}
+        <svg
+          viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+          className="h-auto w-full"
+          aria-label="Ranking position chart"
+        >
+          {/* Grid lines */}
+          {[0, 0.5, 1].map((ratio) => (
+            <line
+              key={ratio}
+              x1={paddingX}
+              y1={paddingY + ratio * innerHeight}
+              x2={chartWidth - paddingX}
+              y2={paddingY + ratio * innerHeight}
+              stroke="currentColor"
+              strokeOpacity={0.1}
+              strokeDasharray="4 4"
+            />
+          ))}
+
+          {/* Line path */}
+          <path
+            d={pathD}
+            fill="none"
             stroke="currentColor"
-            strokeOpacity={0.1}
-            strokeDasharray="4 4"
+            strokeWidth={2}
+            className="text-primary-500"
           />
-        ))}
 
-        {/* Line path */}
-        <path
-          d={pathD}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          className="text-primary-500"
-        />
+          {/* Data points */}
+          {points.map((point, i) => (
+            <g key={i}>
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r={4}
+                className="fill-primary-500"
+              />
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r={6}
+                className="fill-primary-500/20"
+              />
+            </g>
+          ))}
 
-        {/* Data points */}
-        {points.map((point, i) => (
-          <g key={i}>
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r={4}
-              className="fill-primary-500"
-            />
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r={6}
-              className="fill-primary-500/20"
-            />
-          </g>
-        ))}
-
-        {/* Month labels */}
-        {points.map((point, i) => (
-          <text
-            key={i}
-            x={point.x}
-            y={chartHeight - 4}
-            textAnchor="middle"
-            className="fill-muted-foreground text-xs"
-          >
-            {point.month}
-          </text>
-        ))}
-      </svg>
+          {/* Month labels */}
+          {points.map((point, i) => (
+            <text
+              key={i}
+              x={point.x}
+              y={chartHeight - 4}
+              textAnchor="middle"
+              className="fill-muted-foreground text-xs"
+            >
+              {point.month}
+            </text>
+          ))}
+        </svg>
       </div>
 
       {/* Pagination dots (visual only) */}
@@ -198,6 +204,8 @@ function ChallengeHistory({
 export function ParticipantDetail({
   participant,
   className,
+  isOwnProfile = false,
+  onDuelClick,
 }: ParticipantDetailProps) {
   const totalEvents = 20;
   const top25Count = Math.round((participant.top25 / 100) * totalEvents);
@@ -254,23 +262,26 @@ export function ParticipantDetail({
           </div>
 
           {/* Primary action (square + label underneath) */}
-          <div className="flex flex-col items-center gap-2">
-            <button
-              className={cn(
-                'flex h-11 w-11 items-center justify-center rounded-xl',
-                'border border-primary-500 bg-transparent text-foreground',
-                'transition-colors hover:bg-primary-500/10',
-                'focus:outline-none focus:ring-2 focus:ring-primary-500/50',
-              )}
-              aria-label="Duel"
-              type="button"
-            >
-              <SwordsIcon className="h-5 w-5" />
-            </button>
-            <div className="text-xs font-medium tracking-wide text-muted-foreground">
-              DUEL
+          {!isOwnProfile && (
+            <div className="flex flex-col items-center gap-2">
+              <button
+                className={cn(
+                  'flex h-11 w-11 items-center justify-center rounded-xl',
+                  'border border-primary-500 bg-transparent text-foreground',
+                  'transition-colors hover:bg-primary-500/10',
+                  'focus:outline-none focus:ring-2 focus:ring-primary-500/50',
+                )}
+                aria-label="Challenge to duel"
+                type="button"
+                onClick={onDuelClick}
+              >
+                <SwordsIcon className="h-5 w-5" />
+              </button>
+              <div className="text-xs font-medium tracking-wide text-muted-foreground">
+                DUEL
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -282,5 +293,3 @@ export function ParticipantDetail({
     </div>
   );
 }
-
-export default ParticipantDetail;

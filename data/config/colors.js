@@ -1,5 +1,5 @@
 /* Configure colors at https://shipixen.com/color-theme-explorer-shadcn */
-/* HFTM Palette: Neon Pink Primary + Indigo Secondary */
+/* FiveGuysLudus Palette: Neon Pink Primary + Indigo Secondary */
 const colors = {
   primary: {
     lighter: '#FFB3C7', // 200
