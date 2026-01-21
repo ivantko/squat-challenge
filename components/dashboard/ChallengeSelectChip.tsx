@@ -2,7 +2,7 @@
 
 import { ChevronDownIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Challenge } from '@/models/hams-for-the-maams';
+import type { Challenge } from '@/models/challenge-ranking';
 
 interface ChallengeSelectChipProps {
   challenges: Challenge[];

@@ -2,7 +2,7 @@ import type {
   Challenge,
   Participant,
   ParticipantDetail,
-} from '@/models/hams-for-the-maams';
+} from '@/models/challenge-ranking';
 
 export const challenges: Challenge[] = [
   { id: 'all', name: 'All Time' },

@@ -4,3 +4,6 @@ export { Top3Podium } from './Top3Podium';
 export { LeaderboardTable } from './LeaderboardTable';
 export { ParticipantDetail } from './ParticipantDetail';
 export { LogEntryCard } from './LogEntryCard';
+export { DuelDialog } from './DuelDialog';
+export { DuelCard } from './DuelCard';
+export { DuelList } from './DuelList';

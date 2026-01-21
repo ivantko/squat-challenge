@@ -1,8 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { DayPicker } from 'react-day-picker';
 import { createBrowserSupabaseClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/shared/ui/popover';
+import { Button } from '@/components/shared/ui/button';
 
 type LogEntryCardProps = {
   challengeSlug: string;
@@ -21,6 +30,8 @@ export function LogEntryCard({
   const [percentile, setPercentile] = useState(50);
   const [notes, setNotes] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [occurredAt, setOccurredAt] = useState<Date>(new Date());
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [status, setStatus] = useState<
     | { type: 'idle' }
     | { type: 'saving' }
@@ -54,6 +65,7 @@ export function LogEntryCard({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           challengeSlug,
+          occurredAt: occurredAt.toISOString(),
           isWin,
           percentile,
           proofPath,
@@ -71,6 +83,7 @@ export function LogEntryCard({
       setFile(null);
       setIsWin(false);
       setPercentile(50);
+      setOccurredAt(new Date());
       setStatus({ type: 'success' });
       onCreated?.();
     } catch (error) {
@@ -87,6 +100,66 @@ export function LogEntryCard({
       </div>
 
       <div className="space-y-4">
+        {/* Date Picker */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Date</label>
+          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  'w-full justify-start text-left font-normal',
+                  !occurredAt && 'text-muted-foreground',
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {occurredAt ? format(occurredAt, 'PPP') : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <DayPicker
+                mode="single"
+                selected={occurredAt}
+                onSelect={(date) => {
+                  if (date) {
+                    setOccurredAt(date);
+                  }
+                  setIsCalendarOpen(false);
+                }}
+                disabled={{ after: new Date() }}
+                defaultMonth={occurredAt}
+                classNames={{
+                  root: 'p-3',
+                  months: 'flex flex-col sm:flex-row gap-2',
+                  month: 'flex flex-col gap-4',
+                  month_caption: 'flex justify-center items-center h-7',
+                  caption_label: 'text-sm font-medium',
+                  nav: 'flex items-center gap-1',
+                  button_previous:
+                    'absolute left-1 top-0 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 inline-flex items-center justify-center',
+                  button_next:
+                    'absolute right-1 top-0 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 inline-flex items-center justify-center',
+                  weekdays: 'flex',
+                  weekday: 'text-muted-foreground w-9 font-normal text-[0.8rem]',
+                  week: 'flex w-full mt-2',
+                  day: 'h-9 w-9 p-0 text-center text-sm aria-selected:opacity-100',
+                  day_button:
+                    'h-9 w-9 p-0 font-normal hover:bg-accent hover:text-accent-foreground rounded-md focus:bg-accent focus:text-accent-foreground',
+                  selected:
+                    'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-md',
+                  today: 'bg-accent text-accent-foreground rounded-md',
+                  outside: 'text-muted-foreground opacity-50',
+                  disabled: 'text-muted-foreground opacity-50 cursor-not-allowed',
+                  hidden: 'invisible',
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+          <p className="text-xs text-muted-foreground">
+            Select when this entry occurred (defaults to today)
+          </p>
+        </div>
+
         <label className="flex items-center gap-3 text-sm">
           <input
             type="checkbox"
@@ -154,4 +227,3 @@ export function LogEntryCard({
     </div>
   );
 }
-
