@@ -3,12 +3,14 @@
 import { CrownIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Participant } from '@/models/challenge-ranking';
+import { EmptyPodium } from './EmptyPodium';
 
-interface Top3PodiumProps {
+type Top3PodiumProps = {
   participants: Participant[];
   onSelectParticipant?: (participantId: string) => void;
+  onLogEntry?: () => void;
   className?: string;
-}
+};
 
 function PodiumSpot({
   participant,
@@ -96,13 +98,46 @@ function PodiumSpot({
 export function Top3Podium({
   participants,
   onSelectParticipant,
+  onLogEntry,
   className,
 }: Top3PodiumProps) {
-  // Ensure we have exactly 3 participants
   const top3 = participants.slice(0, 3);
-  if (top3.length < 3) return null;
 
-  // Reorder: [2nd, 1st, 3rd] for visual layout
+  // No participants: show empty state with CTA
+  if (top3.length === 0) {
+    return <EmptyPodium onLogEntry={onLogEntry} className={className} />;
+  }
+
+  // Partial podium (1-2 participants): show what we have
+  if (top3.length < 3) {
+    return (
+      <div className={cn('rounded-3xl bg-accent shadow-xl', className)}>
+        <div className="flex items-end justify-center gap-6 px-5 py-5">
+          {top3.length >= 2 && (
+            <PodiumSpot
+              participant={top3[1]}
+              position={2}
+              onClick={() => onSelectParticipant?.(top3[1].id)}
+            />
+          )}
+          <PodiumSpot
+            participant={top3[0]}
+            position={1}
+            onClick={() => onSelectParticipant?.(top3[0].id)}
+          />
+          {top3.length >= 3 && (
+            <PodiumSpot
+              participant={top3[2]}
+              position={3}
+              onClick={() => onSelectParticipant?.(top3[2].id)}
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Full podium: Reorder as [2nd, 1st, 3rd] for visual layout
   const [first, second, third] = top3;
   const podiumOrder = [second, first, third];
 

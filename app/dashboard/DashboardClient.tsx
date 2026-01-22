@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { PlusIcon, TrophyIcon } from 'lucide-react';
 import {
   DashboardAppBar,
   ChallengeSelectChip,
@@ -12,7 +13,10 @@ import {
   LogEntryCard,
   DuelDialog,
   DuelList,
+  LogEntryDialog,
+  FloatingActionButton,
 } from '@/components/dashboard';
+import { Button } from '@/components/shared/ui/button';
 import type {
   Participant as ParticipantModel,
   ParticipantDetail as ParticipantDetailModel,
@@ -66,6 +70,9 @@ export function DashboardClient() {
   // Duel dialog state
   const [isDuelDialogOpen, setIsDuelDialogOpen] = useState(false);
   const [duelRefreshTrigger, setDuelRefreshTrigger] = useState(0);
+
+  // Log entry dialog state
+  const [isLogEntryDialogOpen, setIsLogEntryDialogOpen] = useState(false);
 
   useEffect(() => {
     let isActive = true;
@@ -306,18 +313,31 @@ export function DashboardClient() {
           onBack={handleBack}
           showBackButton={true}
           rightSlot={
-            <form action="/auth/logout" method="post">
-              <button
-                type="submit"
-                className={cn(
-                  'hidden h-10 items-center justify-center rounded-xl px-3 md:flex',
-                  'border border-border bg-transparent text-sm font-medium text-foreground',
-                  'hover:bg-muted/60 focus:outline-none focus:ring-2 focus:ring-primary-500/50',
-                )}
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => {
+                  setIsLogEntryDialogOpen(true);
+                }}
+                variant="primary"
+                size="sm"
+                className="hidden md:flex"
               >
-                Sign out
-              </button>
-            </form>
+                <PlusIcon className="mr-1 h-4 w-4" />
+                Log Entry
+              </Button>
+              <form action="/auth/logout" method="post">
+                <button
+                  type="submit"
+                  className={cn(
+                    'hidden h-10 items-center justify-center rounded-xl px-3 md:flex',
+                    'border border-border bg-transparent text-sm font-medium text-foreground',
+                    'hover:bg-muted/60 focus:outline-none focus:ring-2 focus:ring-primary-500/50',
+                  )}
+                >
+                  Sign out
+                </button>
+              </form>
+            </div>
           }
         />
 
@@ -352,6 +372,9 @@ export function DashboardClient() {
                   <Top3Podium
                     participants={participants}
                     onSelectParticipant={handleParticipantSelect}
+                    onLogEntry={() => {
+                      setIsLogEntryDialogOpen(true);
+                    }}
                   />
                 )}
 
@@ -407,12 +430,46 @@ export function DashboardClient() {
                   </div>
                 </div>
               ) : (
-                <div className="flex h-full min-h-96 items-center justify-center rounded-3xl bg-card p-6 shadow-xl">
+                <div className="flex h-full min-h-96 flex-col items-center justify-center rounded-3xl bg-card p-6 shadow-xl">
                   <div className="text-center">
-                    <div className="mb-2 text-4xl">👈</div>
-                    <p className="text-muted-foreground">
-                      Select a participant to view details
+                    <TrophyIcon className="mx-auto h-12 w-12 text-primary-500/50" />
+                    <h3 className="mt-4 text-lg font-semibold text-foreground">
+                      Welcome to FiveGuysLudus!
+                    </h3>
+                    <p className="mt-2 max-w-xs text-sm text-muted-foreground">
+                      Track challenges with your crew across Fitness, Finance, and Gaming.
                     </p>
+
+                    <div className="mt-6 space-y-2 text-left text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-500 text-xs text-white">
+                          1
+                        </span>
+                        <span>Log your competition entries</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-500 text-xs text-white">
+                          2
+                        </span>
+                        <span>Climb the leaderboard rankings</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-500 text-xs text-white">
+                          3
+                        </span>
+                        <span>Challenge your buddies to duels</span>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        setIsLogEntryDialogOpen(true);
+                      }}
+                      variant="primary"
+                      className="mt-6"
+                    >
+                      Log Your First Entry
+                    </Button>
                   </div>
                 </div>
               )}
@@ -430,6 +487,26 @@ export function DashboardClient() {
           opponentName={selectedParticipant.name}
           challengeId={selectedChallengeId !== 'all' ? selectedChallengeId : undefined}
           onDuelCreated={handleDuelCreated}
+        />
+      )}
+
+      {/* Floating Action Button - Mobile */}
+      <FloatingActionButton
+        onClick={() => {
+          setIsLogEntryDialogOpen(true);
+        }}
+      />
+
+      {/* Log Entry Dialog */}
+      {currentUserId && (
+        <LogEntryDialog
+          open={isLogEntryDialogOpen}
+          onOpenChange={setIsLogEntryDialogOpen}
+          challengeSlug={selectedChallengeId}
+          currentUserId={currentUserId}
+          onEntryCreated={() => {
+            setRefreshCounter((x) => x + 1);
+          }}
         />
       )}
     </div>
