@@ -41,10 +41,13 @@ type SeedResult = {
   message?: string;
 };
 
-type Challenge = {
+/** Challenge data fetched during seeding (distinct from models/challenge-ranking.ts Challenge) */
+type SeedChallenge = {
   id: string;
   slug: string;
   name: string;
+  starts_at: string | null;
+  ends_at: string | null;
 };
 
 type Entry = {
@@ -58,25 +61,35 @@ type Entry = {
 };
 
 /**
- * Creates sample entries for a buddy in a challenge
+ * Creates sample entries for a buddy in a challenge.
+ * Entries are spread within the challenge's date range (or past 90 days if no dates).
+ * Percentiles are correlated with win status for realistic data.
  */
 async function createEntriesForBuddy(
   supabase: SupabaseClient,
   userId: string,
-  challenge: Challenge,
+  challenge: SeedChallenge,
   config: BuddyConfig,
 ): Promise<number> {
   const entries: Entry[] = [];
   const now = new Date();
 
+  // Determine date range from challenge or default to past 90 days
+  const challengeStart = challenge.starts_at
+    ? new Date(challenge.starts_at)
+    : new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+  const challengeEnd = challenge.ends_at ? new Date(challenge.ends_at) : now;
+  const dateRange = Math.max(0, challengeEnd.getTime() - challengeStart.getTime());
+
   for (let i = 0; i < config.entriesPerChallenge; i++) {
-    // Spread entries over past 90 days
-    const daysAgo = Math.floor(Math.random() * 90);
-    const occurredAt = new Date(now);
-    occurredAt.setDate(occurredAt.getDate() - daysAgo);
+    // Spread entries within challenge date range
+    const occurredAt = new Date(challengeStart.getTime() + Math.random() * dateRange);
 
     const isWin = Math.random() < config.winRate;
-    const percentile = Math.floor(Math.random() * 90) + 5; // 5-95
+    // Correlate percentile with win status for realistic data
+    const percentile = isWin
+      ? Math.floor(Math.random() * 45) + 50 // 50-94 for wins
+      : Math.floor(Math.random() * 45) + 5; // 5-49 for losses
 
     entries.push({
       user_id: userId,
@@ -119,7 +132,7 @@ async function seedBuddies(): Promise<void> {
   // Fetch all challenges to join users to them
   const { data: challenges, error: challengesError } = await supabase
     .from('challenges')
-    .select('id, slug, name') as { data: Challenge[] | null; error: Error | null };
+    .select('id, slug, name, starts_at, ends_at');
 
   if (challengesError) {
     console.error('Failed to fetch challenges:', challengesError.message);
@@ -162,20 +175,29 @@ async function seedBuddies(): Promise<void> {
         if (challenges && config) {
           let entriesForBuddy = 0;
           for (const challenge of challenges) {
-            await supabase.from('challenge_participants').upsert(
+            const { error: enrollError } = await supabase.from('challenge_participants').upsert(
               { user_id: existingUser.id, challenge_id: challenge.id },
               { onConflict: 'user_id,challenge_id' },
             );
+            if (enrollError) {
+              console.warn(`    Warning: Failed to enroll ${config.name} in ${challenge.name}:`, enrollError.message);
+              continue;
+            }
 
             // Check if entries already exist for this buddy/challenge
-            const { count } = await supabase
+            const { count, error: countError } = await supabase
               .from('entries')
               .select('*', { count: 'exact', head: true })
               .eq('user_id', existingUser.id)
               .eq('challenge_id', challenge.id);
 
-            if (!count || count === 0) {
-              const created = await createEntriesForBuddy(supabase, existingUser.id, challenge, config);
+            if (countError) {
+              console.warn(`    Warning: Failed to check existing entries for ${config.name} in ${challenge.name}:`, countError.message);
+              continue;
+            }
+
+            if (count === 0) {
+              const created = await createEntriesForBuddy(supabase, existingUser.id, challenge as SeedChallenge, config);
               entriesForBuddy += created;
             }
           }
@@ -225,16 +247,22 @@ async function seedBuddies(): Promise<void> {
         // Join all challenges and create entries
         if (challenges && config) {
           let entriesForBuddy = 0;
+          let enrolledCount = 0;
           for (const challenge of challenges) {
-            await supabase.from('challenge_participants').upsert(
+            const { error: enrollError } = await supabase.from('challenge_participants').upsert(
               { user_id: authData.user.id, challenge_id: challenge.id },
               { onConflict: 'user_id,challenge_id' },
             );
+            if (enrollError) {
+              console.warn(`    Warning: Failed to enroll ${config.name} in ${challenge.name}:`, enrollError.message);
+              continue;
+            }
+            enrolledCount++;
 
-            const created = await createEntriesForBuddy(supabase, authData.user.id, challenge, config);
+            const created = await createEntriesForBuddy(supabase, authData.user.id, challenge as SeedChallenge, config);
             entriesForBuddy += created;
           }
-          console.log(`  → Enrolled ${name} in ${challenges.length} challenges`);
+          console.log(`  → Enrolled ${name} in ${enrolledCount} challenges`);
           console.log(`  → Created ${entriesForBuddy} entries for ${name}`);
           totalEntriesCreated += entriesForBuddy;
         }
