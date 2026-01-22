@@ -1,5 +1,6 @@
 'use client';
 
+import { UsersIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Participant } from '@/models/challenge-ranking';
 
@@ -20,6 +21,38 @@ export function LeaderboardTable({
 }: LeaderboardTableProps) {
   // Skip top 3 as they're shown in the podium
   const tableParticipants = participants.slice(3);
+
+  // Empty state when no participants at all
+  if (participants.length === 0) {
+    return (
+      <div className={cn('flex flex-col', className)}>
+        {/* Header */}
+        <div
+          className={cn(
+            'grid grid-cols-12 gap-2 px-4 py-3',
+            'text-xs font-medium text-muted-foreground',
+            'border-b border-border/50',
+          )}
+        >
+          <div className="col-span-5">Participant</div>
+          <div className="col-span-2 text-right">Win(%)</div>
+          <div className="col-span-3 text-right">Top 25%</div>
+          <div className="col-span-2 text-right">Wins</div>
+        </div>
+
+        {/* Empty state following DuelList pattern */}
+        <div className="flex flex-col items-center justify-center py-8 text-center">
+          <UsersIcon className="h-10 w-10 text-muted-foreground/50" />
+          <h3 className="mt-3 text-sm font-medium text-foreground">
+            No rankings yet
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Log your first entry to appear on the leaderboard!
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn('flex flex-col', className)}>
