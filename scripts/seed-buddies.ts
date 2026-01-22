@@ -47,6 +47,16 @@ type Challenge = {
   name: string;
 };
 
+type Entry = {
+  user_id: string;
+  challenge_id: string;
+  occurred_at: string;
+  is_win: boolean;
+  percentile: number;
+  notes: null;
+  proof_path: null;
+};
+
 /**
  * Creates sample entries for a buddy in a challenge
  */
@@ -56,7 +66,7 @@ async function createEntriesForBuddy(
   challenge: Challenge,
   config: BuddyConfig,
 ): Promise<number> {
-  const entries = [];
+  const entries: Entry[] = [];
   const now = new Date();
 
   for (let i = 0; i < config.entriesPerChallenge; i++) {
