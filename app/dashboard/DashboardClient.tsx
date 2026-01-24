@@ -350,7 +350,7 @@ export function DashboardClient() {
         />
 
         {/* Main Content - Responsive Grid */}
-        <div className="px-4 pb-6 md:px-6">
+        <div className="pb-6">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
             {/* Leaderboard Panel */}
             <div

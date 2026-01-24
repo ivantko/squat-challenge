@@ -33,7 +33,7 @@ export function DashboardAppBar({
   return (
     <header
       className={cn(
-        'flex h-16 items-center justify-between px-4 md:px-6',
+        'flex h-16 items-center justify-between',
         className,
       )}
     >
