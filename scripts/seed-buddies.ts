@@ -10,7 +10,7 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const BUDDIES = ['Austin', 'Ivan', 'Justin', 'Jesse', 'Jeff'] as const;
+const BUDDIES = ['Austin', 'Justin', 'Ivan', 'Jesse', 'Jeff'] as const;
 
 type BuddyName = (typeof BUDDIES)[number];
 
@@ -27,8 +27,8 @@ type BuddyConfig = {
  */
 const BUDDY_CONFIGS: BuddyConfig[] = [
   { name: 'Austin', winRate: 0.70, entriesPerChallenge: 12 },
-  { name: 'Ivan', winRate: 0.60, entriesPerChallenge: 10 },
-  { name: 'Justin', winRate: 0.45, entriesPerChallenge: 8 },
+  { name: 'Justin', winRate: 0.60, entriesPerChallenge: 10 },
+  { name: 'Ivan', winRate: 0.45, entriesPerChallenge: 8 },
   { name: 'Jesse', winRate: 0.35, entriesPerChallenge: 6 },
   { name: 'Jeff', winRate: 0.25, entriesPerChallenge: 5 },
 ];
